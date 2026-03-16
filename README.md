@@ -131,10 +131,28 @@ Supposed to list available games for a platform. (Not implemented yet, so don’
 
 ---
 
-### 6. Get Stat Cards
-**GET** `/statcards?gameId=GAME_ID&uids=UID1,UID2,...`
 
-Supposed to get stat cards for players. (Also not implemented yet.)
+### 6. Get Stat Card
+**GET** `/statscard?uid=UID&spaceId=GAME_ID`
+
+Get a stat card for a player in a specific game. This gives you a summary of their stats in a nice, compact format.
+
+**Example:**
+```bash
+curl "http://localhost:8080/statscard?uid=some-uid&spaceId=some-game-id"
+```
+
+**Response:**
+```json
+{
+	"success": true,
+	"message": "Statscard retrieved successfully",
+	"data": {
+		"statName": "value",
+		"statName2": "value2"
+	}
+}
+```
 
 ---
 
