@@ -122,7 +122,7 @@ func (s *StatsService) GetStatsCard(spaceId, identifier string) (map[string]any,
 		}
 	}
 
-	url := fmt.Sprintf("https://public-ubiservices.ubi.com/v1/profiles/%s/statscard?spaceId=%s", identifier, spaceId)
+	url := fmt.Sprintf("%s/v1/profiles/%s/statscard?spaceId=%s", ubiServicesUrl, identifier, spaceId)
 
 	resp, err := s.global.MakeRequest(ctx, "GET", url, nil, nil)
 	if err != nil {
