@@ -1,0 +1,13 @@
+ubi-go
+.env
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+*.swp
+*.log
+.DS_Store
+Thumbs.db
+vendor/
+*.bak
+*.tmp

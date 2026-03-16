@@ -1,0 +1,21 @@
+# Regular App Data
+APP_NAME=Ubi-Go
+IS_DEV_MODE=true
+REDIS_HOST=
+REDIS_PORT=6379
+REDIS_PASS=
+REDIS_GLOBAL_CACHE_KEY=ubi-go
+UBISOFT_ACCOUNTS=[{"email": "firstemail@email.com", "password": "firstpass123"},]
+
+# API configuration
+API_PORT=8080
+
+# Chromium path used for headless login (in case needed)
+CHROMIUM_CMD=/usr/bin/chromium
+
+# 1 hour
+CACHE_PROFILE_DURATION=3600
+
+# 6 hours
+CACHE_STATS_CARD_DURATION=21600
+CACHE_STATS_DURATION=21600
