@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
 )
 
 func NewService(logger *log.Logger, cache *cache.Cache, cfg *config.Config, global *global.GlobalService) *ProfileService {
@@ -71,7 +72,10 @@ func (s *ProfileService) GetProfileByUsername(username, platform string) (UserPr
 			}
 		}
 	}
-	url := fmt.Sprintf("%s/%s?nameOnPlatform=%s&platformType=%s", ubiServicesUrl, ubiServicesProfilesUrlV2, username, platform)
+	params := url.Values{}
+	params.Set("nameOnPlatform", username)
+	params.Set("platformType", platform)
+	url := fmt.Sprintf("https://public-ubiservices.ubi.com/v2/profiles/?%s", params.Encode())
 	response, err := s.global.MakeRequest(ctx, "GET", url, nil, nil)
 	if err != nil {
 		return UserProfile{}, fmt.Errorf("failed to retrieve profile: %w", err)

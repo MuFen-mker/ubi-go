@@ -80,6 +80,8 @@ func (s *GlobalService) doRequest(ctx context.Context, method, url string, body 
 		"Ubi-LocaleCode": "en-US",
 		"Content-Type":   "application/json; charset=utf-8",
 		"User-Agent":     utils.GetRandomUserAgent(),
+		"Origin":         "https://connect.ubisoft.com",
+		"Referer":        "https://connect.ubisoft.com",
 	}
 
 	maps.Copy(headers, customHeaders)
