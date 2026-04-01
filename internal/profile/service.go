@@ -60,7 +60,7 @@ func (s *ProfileService) GetProfileByUid(identifier string) (UserProfile, error)
 }
 
 func (s *ProfileService) GetProfileByUsername(username, platform string) (UserProfile, error) {
-	s.logger.Printf("Searching for Division2 Profile Data: %s (%s)", username, platform)
+	s.logger.Printf("Searching for Profile Data: %s (%s)", username, platform)
 	ctx := context.Background()
 	cacheKey := fmt.Sprintf("%s:username:%s:platform:%s", ubisoftProfilesCacheKey, username, platform)
 	if s.cache != nil {
