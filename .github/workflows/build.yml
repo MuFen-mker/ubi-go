@@ -14,7 +14,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21'  # 根据项目实际要求调整
+          go-version: '1.25'  # 根据项目实际要求调整
 
       - name: Build for Linux
         run: |
