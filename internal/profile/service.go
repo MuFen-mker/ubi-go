@@ -38,11 +38,11 @@ func (s *ProfileService) GetProfileByUid(identifier string) (UserProfile, error)
 	if err != nil {
 		return UserProfile{}, fmt.Errorf("failed to retrieve profile: %w", err)
 	}
-	// Robust checks for response
+
 	if len(response) == 0 {
 		return UserProfile{}, fmt.Errorf("no profile found for uid: %s", identifier)
 	}
-	// Defensive: check for required fields
+
 	profile := UserProfile{
 		IdOnPlatform:   fmt.Sprint(response["idOnPlatform"]),
 		NameOnPlatform: fmt.Sprint(response["nameOnPlatform"]),
@@ -50,7 +50,7 @@ func (s *ProfileService) GetProfileByUid(identifier string) (UserProfile, error)
 		ProfileId:      fmt.Sprint(response["profileId"]),
 		UserId:         fmt.Sprint(response["userId"]),
 	}
-	// Cache the result
+
 	if s.cache != nil {
 		if profileJson, err := json.Marshal(profile); err == nil {
 			s.cache.Put(ctx, cacheKey, string(profileJson), s.config.GetCacheProfileDuration())
@@ -95,7 +95,7 @@ func (s *ProfileService) GetProfileByUsername(username, platform string) (UserPr
 		ProfileId:      fmt.Sprint(profile["profileId"]),
 		UserId:         fmt.Sprint(profile["userId"]),
 	}
-	// Cache the result
+
 	if s.cache != nil {
 		if profileJson, err := json.Marshal(result); err == nil {
 			s.cache.Put(ctx, cacheKey, string(profileJson), s.config.GetCacheProfileDuration())
