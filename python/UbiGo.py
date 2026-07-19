@@ -131,43 +131,32 @@ class UbiGoClient:
         except Exception as e:
             raise UbiGoAPIError(resp.status_code, f"Invalid JSON response: {e}", resp)
 
-    def report(self, payload: dict) -> dict:
-            """
-            Send a Ubisoft player report using a POST request to the /report endpoint.
-            Args:
-                payload: The report data to send (must be a dict).
-            Returns:
-                dict: API response or error details.
-            Raises:
-                ValueError: If payload is not provided.
-                UbiGoAPIError: If the API returns an error response.
-            """
-            if not payload:
-                raise ValueError("Payload was never provided")
+    def send_report(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Submit a Ubisoft player report through the /report endpoint.
 
-            url = f"{self.base_url}/report"
-            headers = {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept": "application/json, text/plain, */*",
-            }
-            try:
-                resp = self.session.post(url, json=payload, headers=headers, timeout=self.timeout)
-            except Exception as e:
-                raise UbiGoClientError(f"Failed to send report: {e}")
+        The payload mirrors the microservice's ReportPayload contract:
+            - platform: one of 'uplay', 'psn', 'xbl'
+            - productInstallmentId: the Ubisoft game id (caller-provided)
+            - reportedId: the Ubisoft profile id of the reported player
+            - reportedUsername: the reported player's username
+            - description: the human readable report body
+            - reportedVideoLink: comma-separated evidence URLs
 
-            try:
-                data = resp.json()
-            except Exception as e:
-                raise UbiGoAPIError(resp.status_code, f"Invalid JSON response: {e}", resp)
+        Returns the parsed Ubisoft response (e.g. {"caseId": ..., "caseNumber": ...}).
+        Raises:
+            ValueError: If payload is not provided.
+            UbiGoAPIError: If the API returns an error response.
+        """
+        if not payload:
+            raise ValueError("Payload was never provided")
+        url = f"{self.base_url}/report"
+        resp = self.session.post(url, json=payload, timeout=self.timeout)
+        return self._handle_response(resp)
 
-            if not data.get("success", False):
-                return {"status": False, "error": data.get("error", "Unknown error"), "code": resp.status_code}
+    # Backwards-compatible alias for the original method name.
+    report = send_report
 
-            if "errorCode" in data:
-                return {"error": data.get("message", "An unknown error occurred.")}
-
-            return {"data": data.get("data")}
-        
     def close(self) -> None:
         """Close the underlying HTTP session."""
         self.session.close()

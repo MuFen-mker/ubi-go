@@ -12,9 +12,14 @@ type ReportService struct {
 	global *global.GlobalService
 }
 
+// ReportPayload carries the semantic report data sent by the caller.
+// The Ubisoft-specific case structure is assembled inside the service so
+// that all Ubisoft API knowledge stays within this microservice.
 type ReportPayload struct {
-	ReporterID  string `json:"reporterId"`
-	ReportedID  string `json:"reportedId"`
-	Reason      string `json:"reason"`
-	Description string `json:"description"`
+	Platform             string `json:"platform"`
+	ProductInstallmentID string `json:"productInstallmentId"`
+	ReportedID           string `json:"reportedId"`
+	ReportedUsername     string `json:"reportedUsername"`
+	Description          string `json:"description"`
+	ReportedVideoLink    string `json:"reportedVideoLink"`
 }

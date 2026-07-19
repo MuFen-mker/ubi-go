@@ -18,9 +18,6 @@ import (
 	"time"
 )
 
-// had to plugin Claude and solve the auth issues here
-// since datadome was actually detecting the login attempts
-// don't mind the AI comments, they are very useful
 func NewAuth(logger *log.Logger, cache *cache.Cache, config *config.Config) *Auth {
 	client, err := utils.NewBrowserClient("")
 	if err != nil {
@@ -37,12 +34,6 @@ func NewAuth(logger *log.Logger, cache *cache.Cache, config *config.Config) *Aut
 	}
 }
 
-// EnsureSession checks for a cached session and logs in if needed.
-// Strategy:
-//  1. Return cached session if still valid.
-//  2. Try browser login for each configured account (bypasses DataDome).
-//  3. Fall back to direct API login.
-//  4. If rate-limited (429), rotate through proxies with exponential backoff.
 func (a *Auth) EnsureSession(ctx context.Context) error {
 	a.sessionMu.Lock()
 	defer a.sessionMu.Unlock()
@@ -58,7 +49,7 @@ func (a *Auth) EnsureSession(ctx context.Context) error {
 
 	a.logger.Println("Cached session missing or expired, logging in...")
 
-	// 1. Try refreshing with the rememberMeTicket (no browser needed).
+	// remember me
 	if a.UserData.RememberMeTicket != "" {
 		a.logger.Println("Attempting session refresh via rememberMeTicket...")
 		if err := a.refreshSession(ctx); err == nil {
@@ -69,7 +60,7 @@ func (a *Auth) EnsureSession(ctx context.Context) error {
 		}
 	}
 
-	// 2. Browser login (handles DataDome JS challenges).
+	// browser login
 	if chromiumPath := a.config.GetChromiumCommand(); chromiumPath != "" {
 		accounts := a.config.GetUbisoftAccounts()
 		for i, account := range accounts {
@@ -109,7 +100,6 @@ func (a *Auth) EnsureSession(ctx context.Context) error {
 	// }
 }
 
-// loginWithProxiesBackoff attempts proxy-based login with exponential backoff.
 func (a *Auth) loginWithProxiesBackoff(ctx context.Context) error {
 	const maxRounds = 3
 	backoff := 30 * time.Second
@@ -428,6 +418,7 @@ func (a *Auth) sessionTTLSeconds(data *UserData) int {
 			return sessionTTL
 		}
 	}
+
 	// Expire from Redis 60 seconds before the actual expiry (same margin as isExpired).
 	ttl := int(time.Until(expTime.Add(-60 * time.Second)).Seconds())
 	a.logger.Printf("[TTL] expiration=%s now=%s ttl=%ds", data.Expiration, time.Now().UTC().Format(time.RFC3339), ttl)
@@ -437,7 +428,6 @@ func (a *Auth) sessionTTLSeconds(data *UserData) int {
 	return ttl
 }
 
-// encodeCredentials returns the Base64-encoded "email:password" string used in Basic auth.
 func encodeCredentials(email, password string) string {
 	return base64.StdEncoding.EncodeToString([]byte(email + ":" + password))
 }
